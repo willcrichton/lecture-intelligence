@@ -1,0 +1,23 @@
+{
+    "name": "Video Habits",
+    "version": "1.0",
+    "description": "",
+    "manifest_version": 2,
+    "background": {
+        "scripts": ["background.js"],
+        "persistent": false
+    },
+    "content_scripts": [{
+        "matches": ["*://stanford-pilot.hosted.panopto.com/*"],
+        "js": ["panopto.js"]
+    }],
+    "permissions": [
+        "declarativeContent",
+        "activeTab",
+        "http://localhost:5000/",
+        "https://stanford-pilot.hosted.panopto.com/"
+    ],
+    "browser_action": {
+        "default_title": "Scrape Canvas video data"
+    }
+}
