@@ -42,6 +42,9 @@ LECTURES = [
     Lecture(index=13, name='Traits', date=dt.datetime(2019, 11, 4))
 ]
 
+IDX_TO_LECTURE = {l.index: l for l in LECTURES}
+NAME_TO_LECTURE = {l.name: l for l in LECTURES}
+
 ASSIGNMENTS = [
     Assignment(index=1,
                name='JSafe',
@@ -58,7 +61,7 @@ ASSIGNMENTS = [
     Assignment(index=4,
                name='Interpreter',
                duedate=dt.datetime(2019, 10, 23),
-               lectures=LECTURES[6]),
+               lectures=[LECTURES[6]]),
     Assignment(index=5,
                name='WebAssembly',
                duedate=dt.datetime(2019, 10, 30),
@@ -66,5 +69,8 @@ ASSIGNMENTS = [
     Assignment(index=6,
                name='Linear Types',
                duedate=dt.datetime(2019, 11, 7),
-               lectures=LECTURES[10])
+               lectures=[LECTURES[10]])
 ]
+
+IDX_TO_ASSIGNMENT = {a.index: a for a in ASSIGNMENTS}
+NAME_TO_ASSIGNMENT = {a.name: a for a in ASSIGNMENTS}
