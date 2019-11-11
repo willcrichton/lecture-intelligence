@@ -2,6 +2,7 @@ from lib.etl import parse_canvas_csv
 from dataclasses import dataclass
 import datetime as dt
 from typing import List
+from lib.sql import Lecture as SqlLecture
 
 
 @dataclass
@@ -15,7 +16,15 @@ class Lecture:
         return f'../data/viewing/{date}.csv'
 
     def viewing_data(self):
-        return parse_canvas_csv(self.path())
+        df = parse_canvas_csv(self.path())
+        df['lecture'] = self.index
+        return df
+
+    def to_json(self):
+        return {'index': self.index, 'name': self.name, 'date': self.date}
+
+    def to_sql(self):
+        return SqlLecture(index=self.index, name=self.name, date=self.date)
 
 
 @dataclass
@@ -24,6 +33,12 @@ class Assignment:
     name: str
     duedate: dt.datetime
     lectures: List[Lecture]
+
+    def to_json(self):
+        return {'index': self.index, 'name': self.name, 'duedate': self.duedate}
+
+    def to_index_json(self):
+        return [{'assignment': self.index, 'lecture': l.index} for l in self.lectures]
 
 
 LECTURES = [
