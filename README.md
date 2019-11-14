@@ -17,6 +17,7 @@ pip3 install -r requirements.txt
 5. Click the "V" icon in the top right of the browser.
 6. Your data has now been populated and anonymized into the `data` directory of this repository.
 
-### Running analytics
+### Analytics dashboard
 
-TODO
+1. Go to `lib` directory and run `FLASK_APP=dashboard.py flask run`
+2. Go to [`http://localhost:5000`](http://localhost:5000).
