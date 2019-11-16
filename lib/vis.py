@@ -30,10 +30,11 @@ def plot_session_intervals(df):
     sns.despine()
 
 
-def plot_lecture_heatmap(df):
+def lecture_heatmap(vd, ax, lec):
+    vd = vd[vd.lecture == int(lec)]
     bins = [0 for _ in range(0, 90 * 60)]
 
-    for _, row in df.iterrows():
+    for _, row in vd.iterrows():
         for i in np.arange(np.floor(row.start), np.ceil(row.end)):
             bins[int(i)] += 1
 
@@ -41,9 +42,8 @@ def plot_lecture_heatmap(df):
     ax = pd.DataFrame({
         'viewers': bins,
         'time': time
-    }).plot('time', 'viewers', figsize=(15, 5), legend=False)
+    }).plot('time', 'viewers', figsize=(15, 5), legend=False, ax=ax)
     ax.set_ylabel('Number of students viewing at time')
-    return ax
 
 
 def minutes_watched_per_hour(vd, ax):

@@ -1,5 +1,6 @@
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.text == 'canvas_scrape') {
+    alert('Starting scrape, close this alert and wait a few seconds...');
     let promises = Array.from(document.body.querySelectorAll('.detail-title')).map(
       (el) => {
         let href = el.href;
@@ -13,7 +14,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
           response.blob().then((blob) => {
             let form = new FormData();
             form.append(`${date.replace(/\//g, "_")}.zip`, blob);
-            return fetch('http://localhost:5000', {
+            return fetch('http://localhost:5000/api/upload_viewing_data', {
               method: 'POST',
               body: form
             });
@@ -22,8 +23,8 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
     Promise
       .all(promises)
-      .then((responses) => {
-        console.log(responses[0]);
+      .then(() => fetch('http://localhost:5000/api/generate_lecture_json'))
+      .then(() => {
         alert('Successfully scraped video data');
       });
 

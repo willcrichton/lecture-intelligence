@@ -1,23 +1,31 @@
-from lib.etl import parse_canvas_csv
 from dataclasses import dataclass
-import datetime as dt
+from datetime import datetime as dt
 from typing import List
+import os
+import pandas as pd
+import json
 
 
 @dataclass
 class Lecture:
     index: int
     name: str
-    date: dt.datetime
+    date: dt
 
     def path(self):
         date = self.date.strftime('%-m_%-d_%Y')
         return f'../data/viewing/{date}.csv'
 
     def viewing_data(self):
-        df = parse_canvas_csv(self.path())
+        df = pd.read_csv(self.path(), parse_dates=['time'])
         df['lecture'] = self.index
         return df
+
+    @classmethod
+    def from_json(cls, json):
+        return cls(index=json['index'],
+                   name=json['name'],
+                   date=dt.strptime(json['date'], '%m/%d/%Y'))
 
     def to_json(self):
         return {'index': self.index, 'name': self.name, 'date': self.date}
@@ -27,61 +35,56 @@ class Lecture:
 class Assignment:
     index: int
     name: str
-    duedate: dt.datetime
-    lectures: List[Lecture]
+    duedate: dt
+    lectures: List[int]
 
     def to_json(self):
-        return {'index': self.index, 'name': self.name, 'duedate': self.duedate}
+        return {
+            'index': self.index,
+            'name': self.name,
+            'duedate': dt.strftime(self.duedate, '%m/%d/%Y'),
+            'lectures': self.lectures
+        }
 
-    def to_index_json(self):
-        return [{'assignment': self.index, 'lecture': l.index} for l in self.lectures]
+    @classmethod
+    def from_json(cls, json):
+        return cls(index=json['index'],
+                   name=json['name'],
+                   lectures=json['lectures'],
+                   duedate=dt.strptime(json['duedate'], '%m/%d/%Y'))
 
 
-LECTURES = [
-    Lecture(index=1, name='Introduction', date=dt.datetime(2019, 9, 23)),
-    Lecture(index=2, name='Syntax and semantics', date=dt.datetime(2019, 9, 25)),
-    Lecture(index=3, name='Lambda calculus', date=dt.datetime(2019, 9, 30)),
-    Lecture(index=4, name='Type systems', date=dt.datetime(2019, 10, 2)),
-    Lecture(index=5, name='Functional basics', date=dt.datetime(2019, 10, 7)),
-    Lecture(index=6, name='Algebraic data types', date=dt.datetime(2019, 10, 9)),
-    Lecture(index=7, name='Parametric types', date=dt.datetime(2019, 10, 14)),
-    # No lecture 8
-    Lecture(index=9, name='Mutability', date=dt.datetime(2019, 10, 21)),
-    Lecture(index=10, name='Control flow: branches', date=dt.datetime(2019, 10, 23)),
-    Lecture(index=11, name='Control flow: functions', date=dt.datetime(2019, 10, 28)),
-    Lecture(index=12, name='Memory safety', date=dt.datetime(2019, 10, 30)),
-    Lecture(index=13, name='Traits', date=dt.datetime(2019, 11, 4))
-]
+LECTURE_JSON_PATH = os.path.abspath('../data/lectures.json')
+
+
+def load_lectures():
+    if os.path.isfile(LECTURE_JSON_PATH):
+        return [
+            Lecture.from_json(lec)
+            for lec in json.load(open(LECTURE_JSON_PATH, 'r'))
+        ]
+    else:
+        return []
+
+
+LECTURES = load_lectures()
 
 IDX_TO_LECTURE = {l.index: l for l in LECTURES}
 NAME_TO_LECTURE = {l.name: l for l in LECTURES}
 
-ASSIGNMENTS = [
-    Assignment(index=1,
-               name='JSafe',
-               duedate=dt.datetime(2019, 10, 2),
-               lectures=[LECTURES[1]]),
-    Assignment(index=2,
-               name='Lambda Theory',
-               duedate=dt.datetime(2019, 10, 10),
-               lectures=LECTURES[2:4]),
-    Assignment(index=3,
-               name='106 Redux',
-               duedate=dt.datetime(2019, 10, 16),
-               lectures=LECTURES[4:6]),
-    Assignment(index=4,
-               name='Interpreter',
-               duedate=dt.datetime(2019, 10, 23),
-               lectures=[LECTURES[6]]),
-    Assignment(index=5,
-               name='WebAssembly',
-               duedate=dt.datetime(2019, 10, 30),
-               lectures=LECTURES[7:10]),
-    Assignment(index=6,
-               name='Linear Types',
-               duedate=dt.datetime(2019, 11, 7),
-               lectures=[LECTURES[10]])
-]
+
+def load_assignments():
+    ASSIGNMENT_JSON_PATH = os.path.abspath('../data/assignments.json')
+    if os.path.isfile(ASSIGNMENT_JSON_PATH):
+        return [
+            Assignment.from_json(lec)
+            for lec in json.load(open(ASSIGNMENT_JSON_PATH, 'r'))
+        ]
+    else:
+        return []
+
+
+ASSIGNMENTS = load_assignments()
 
 IDX_TO_ASSIGNMENT = {a.index: a for a in ASSIGNMENTS}
 NAME_TO_ASSIGNMENT = {a.name: a for a in ASSIGNMENTS}

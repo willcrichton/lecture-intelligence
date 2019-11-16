@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block header %}
+<script src="/static/input.js"></script>
+{% endblock %}
+{% block content %}
+<div id="lecture-input">
+  <button id="add-lecture">Add lecture</button>
+  <button id="remove-lecture">Remove lecture</button>
+  <div id="lectures"></div>
+</div>
+<div id="assignment-input" style="margin-top:30px;">
+  <button id="add-assignment">Add assignment</button>
+  <button id="remove-assignment">Remove assignment</button>
+  <div id="assignments"></div>
+</div>
+{% endblock %}
