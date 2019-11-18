@@ -14,7 +14,7 @@ FLASK_APP=server flask run
 
 Keep the server running in a terminal tab while proceeding to the next steps.
 
-### Scraping Canvas data
+### Scraping Panopto data
 
 For this step, you will need to use Google Chrome.
 
