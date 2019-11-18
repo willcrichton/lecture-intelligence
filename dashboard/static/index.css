@@ -1,3 +1,27 @@
-body { padding-bottom: 20px; }
+body {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    font-family: 'Roboto', 'Helvetica Neue', 'Arial', sans-serif;
+}
 
 .plot { max-width: 100%; }
+
+h1, h2 {
+    font-family: 'Bebas Neue', sans-serif;
+}
+
+h1 {
+    font-size: 64px;
+    font-weight: bold;
+    border-bottom: 1px solid #aaa;
+}
+
+h2 {
+    font-size: 36px;
+    margin: 40px 0 20px;
+    display: inline-block;
+    clear: both;
+    border: 1px solid #aaa;;
+    background: #eee;
+    padding: 15px 20px 10px;
+}

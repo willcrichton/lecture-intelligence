@@ -28,7 +28,11 @@ class Lecture:
                    date=dt.strptime(json['date'], '%m/%d/%Y'))
 
     def to_json(self):
-        return {'index': self.index, 'name': self.name, 'date': self.date}
+        return {
+            'index': self.index,
+            'name': self.name,
+            'date': dt.strftime(self.date, '%m/%d/%Y')
+        }
 
 
 @dataclass
@@ -45,6 +49,9 @@ class Assignment:
             'duedate': dt.strftime(self.duedate, '%m/%d/%Y'),
             'lectures': self.lectures
         }
+
+    def lecture_obj(self):
+        return [IDX_TO_LECTURE[lec] for lec in self.lectures]
 
     @classmethod
     def from_json(cls, json):
@@ -72,9 +79,10 @@ LECTURES = load_lectures()
 IDX_TO_LECTURE = {l.index: l for l in LECTURES}
 NAME_TO_LECTURE = {l.name: l for l in LECTURES}
 
+ASSIGNMENT_JSON_PATH = os.path.abspath('../data/assignments.json')
+
 
 def load_assignments():
-    ASSIGNMENT_JSON_PATH = os.path.abspath('../data/assignments.json')
     if os.path.isfile(ASSIGNMENT_JSON_PATH):
         return [
             Assignment.from_json(lec)

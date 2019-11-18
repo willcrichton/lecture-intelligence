@@ -51,6 +51,12 @@ $(() => {
         {title: "Related lectures", field:"lectures", editor:"input"}
       ],
       dataEdited: (data) => {
+        data.forEach((row) => {
+          if (typeof row.lectures == "string") {
+            row.lectures = row.lectures.split(",").map((i) => parseInt(i));
+          }
+        });
+
         $.post({
           url: '/api/assignments',
           data: JSON.stringify(data),

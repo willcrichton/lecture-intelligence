@@ -15,7 +15,7 @@ from pathlib import Path
 
 sys.path.append('..')
 
-from lib.course import load_lectures, Lecture, LECTURE_JSON_PATH, load_assignments
+from lib.course import load_lectures, Lecture, LECTURE_JSON_PATH, load_assignments, ASSIGNMENT_JSON_PATH
 from lib.etl import clean_viewing_data, anonymize_panopto_data
 import lib.vis as vis
 
@@ -54,6 +54,7 @@ def lectures():
 def assignments():
     if request.method == 'POST':
         assignment_json = request.get_json()
+        print(assignment_json)
         json.dump(assignment_json, open(ASSIGNMENT_JSON_PATH, 'w'))
         return ''
     else:
@@ -74,7 +75,7 @@ def plot():
             fig.savefig(f, format='svg')
             return f.getvalue()
 
-        return Response(pcache.get(hash(request.args), get_svg),
+        return Response(pcache.get(request.query_string, get_svg),
                         mimetype='image/svg+xml')
 
     else:
