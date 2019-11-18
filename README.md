@@ -1,4 +1,6 @@
-# Video habits
+# Lecture Intelligence
+
+A tool for scraping and analyzing lecture video viewing data from Panopto.
 
 ## Setup
 
@@ -10,7 +12,11 @@ cd lib
 FLASK_APP=server flask run
 ```
 
+Keep the server running in a terminal tab while proceeding to the next steps.
+
 ### Scraping Canvas data
+
+For this step, you will need to use Google Chrome.
 
 1. Go to `chrome://extensions` and enable "Developer mode" (top-right).
 2. Click "Load unpacked" and select the "panopto-scraper" directory.
@@ -20,4 +26,4 @@ FLASK_APP=server flask run
 
 ### Analytics dashboard
 
-Go to [`http://localhost:5000`](http://localhost:5000).
+Go to [`http://localhost:5000`](http://localhost:5000). Your results await!
