@@ -23,7 +23,7 @@ For this step, you will need to use Google Chrome.
 1. Go to `chrome://extensions` and enable "Developer mode" (top-right).
 2. Click "Load unpacked" (top-left) and select the "panopto-scraper" directory in this repository.
 3. Go to [Panopto](https://stanford-pilot.hosted.panopto.com/Panopto/Pages/Sessions/List.aspx#isSharedWithMe=true). Find a video from the course you want to analyze, and click the course link in the thumb nail, e.g. "Fall 2019 - Programming Languages".
-4. Click the "V" icon in the top right of the browser.
+4. Click the "V" icon in the top right of the browser. Wait for both confirmation popups to appear.
 5. Your data has now been populated and anonymized into the `data` directory of this repository.
 
 ### Analytics dashboard
