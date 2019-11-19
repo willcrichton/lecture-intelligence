@@ -26,7 +26,7 @@ def load_clean_data():
         return pd.DataFrame([])
     else:
         return clean_viewing_data(
-            pd.concat([l.viewing_data() for l in ]))
+            pd.concat([l.viewing_data() for l in lectures]))
 
 
 pcache = PickleCache('../chart-cache')
