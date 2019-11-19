@@ -21,8 +21,12 @@ import lib.vis as vis
 
 
 def load_clean_data():
-    return clean_viewing_data(
-        pd.concat([l.viewing_data() for l in load_lectures()]))
+    lectures = load_lectures()
+    if len(lectures) == 0:
+        return pd.DataFrame([])
+    else:
+        return clean_viewing_data(
+            pd.concat([l.viewing_data() for l in ]))
 
 
 pcache = PickleCache('../chart-cache')
