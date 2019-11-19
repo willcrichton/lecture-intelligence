@@ -204,7 +204,7 @@ def mean_lateness(vd, ax):
 
     df = pd.DataFrame(mean_late)
     df = df[df.cnt >= 5]
-    bins = np.arange(0, np.ceil(max(df.late)) + 1)
+    bins = np.arange(0, np.ceil(max(df.late) + .5) + 1)
     df.hist('late', ax=ax, bins=bins - 0.5)
     ax.set_xlabel('Median number of days lecture is viewed after release')
     ax.set_ylabel('Number of students\n(who watched at least 5 lectures)')
