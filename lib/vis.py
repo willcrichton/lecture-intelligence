@@ -78,13 +78,14 @@ def plot_session_intervals(df):
 def lecture_heatmap(vd, ax, lec):
     lec = int(lec)
     vd = vd[vd.lecture == lec]
-    bins = [0 for _ in range(0, 90 * 60)]
+    max_time = int(vd.end.max())+1
+    bins = [0 for _ in range(0, max_time)]
 
     for _, row in vd.iterrows():
         for i in np.arange(np.floor(row.start), np.ceil(row.end)):
             bins[int(i)] += 1
 
-    time = [pd.Timestamp(i * 1e9) for i in range(0, 90 * 60)]
+    time = [pd.Timestamp(i * 1e9) for i in range(0, max_time)]
     ax = pd.DataFrame({
         'viewers': bins,
         'time': time

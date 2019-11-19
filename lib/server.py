@@ -69,6 +69,9 @@ def assignments():
 def plot():
     args = dict(request.args)
     kind = args.pop('kind')
+    if isinstance(kind, list):
+        kind = kind[0]
+        args = {k: v[0] for k, v in args.items()}
     if hasattr(vis, kind):
 
         def get_svg():
