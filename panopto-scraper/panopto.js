@@ -1,6 +1,6 @@
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.text == 'canvas_scrape') {
-    alert('Starting scrape, close this alert and wait a few seconds...');
+    let should_dl_videos = confirm('Starting scrape. Do you want to also download the videos?\n(Cancel means no, but still scrape viewing data)');
     let promises = Array.from(document.body.querySelectorAll('.detail-title')).map(
       (el) => {
         let href = el.href;
@@ -9,6 +9,12 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         console.assert(id);
         let date = el.textContent.match(/\d+\/\d+\/\d+/)[0];
         console.assert(date);
+
+        if (should_dl_videos) {
+          let download_url = `https://stanford-pilot.hosted.panopto.com/Panopto/Podcast/Download/${id}.mp4?mediaTargetType=videoPodcast`;
+          window.open(download_url, '_blank');
+        }
+
         let url = `https://stanford-pilot.hosted.panopto.com/Panopto/Services/Export.ashx?action=ExportDeliveryAnalytics&delivery=${id}&type=HeatMap&timezone=America%2FLos_Angeles`;
         return fetch(url).then((response) =>
           response.blob().then((blob) => {
