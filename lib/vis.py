@@ -216,9 +216,9 @@ def quarter_view(vd, ax):
 	ax = vd.groupby("date").sum().plot.bar(y="minutes", rot=90, figsize=(13, 5), legend=False, color='cornflowerblue')
 
 	for assgnment in ASSIGNMENTS:
-    	# Compute assignment deadline with respect to the first lecture date (ax plots lines using indexes)
-    	delta = assgnment.duedate - LECTURES[0].date 
-    	ax.axvline(x=delta.days, color='darkblue')
+    		# Compute assignment deadline with respect to the first lecture date (ax plots lines using indexes)
+    		delta = assgnment.duedate - LECTURES[0].date 
+    		ax.axvline(x=delta.days, color='darkblue')
     
     	ax.set_xlabel('Date')
     	ax.set_ylabel('Minutes watched of all lectures')
