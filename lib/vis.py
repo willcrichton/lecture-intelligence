@@ -211,14 +211,3 @@ def mean_lateness(vd, ax):
     ax.set_title(
         'How long do students wait on average before watching lecture?')
     return df
-
-def quarter_view(vd, ax):
-	ax = vd.groupby("date").sum().plot.bar(y="minutes", rot=90, figsize=(13, 5), legend=False, color='cornflowerblue')
-
-	# Compute assignment deadline with respect to the first lecture date (ax plots lines using indexes)
-	for assgnment in ASSIGNMENTS:
-    		delta = assgnment.duedate - LECTURES[0].date 
-    		ax.axvline(x=delta.days, color='darkblue'
-    		ax.set_xlabel('Date')
-    		ax.set_ylabel('Minutes watched of all lectures')
-    		ax.set_title('When, and for how many minutes, do students consume lecture material?')
