@@ -219,7 +219,6 @@ def quarter_view(vd, ax):
 	for assgnment in ASSIGNMENTS:
     		delta = assgnment.duedate - LECTURES[0].date 
     		ax.axvline(x=delta.days, color='darkblue'
-
-    	ax.set_xlabel('Date')
-    	ax.set_ylabel('Minutes watched of all lectures')
-    	ax.set_title('When, and for how many minutes, do students consume lecture material?')
+    		ax.set_xlabel('Date')
+    		ax.set_ylabel('Minutes watched of all lectures')
+    		ax.set_title('When, and for how many minutes, do students consume lecture material?')
