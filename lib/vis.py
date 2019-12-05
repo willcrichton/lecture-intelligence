@@ -224,3 +224,47 @@ def quarter_view(vd, ax):
     ax.set_xlabel('Date')
     ax.set_ylabel('Minutes watched of all lectures')
     ax.set_title('When, and for how many minutes, do students consume lecture material?')
+
+def day_to_string(day):
+    days = ["M", " T", "W", "T", "F", "S", "S"]
+    return days[day]
+
+def class_progression(ax, vd):
+    df = vd
+    # Group by lecture and date (unique key) 
+    df['date'] = [dt.datetime.date(d) for d in df['time']] 
+    df2 = df.groupby(['lecture', 'date']).sum()
+    df2 = df2.reset_index()
+    # Create pivot dataframe and replace NaN with 0 minutes 
+    pivot_df = df2.pivot(index='date', columns='lecture', values='minutes')
+    pivot_df = pivot_df.fillna(0)
+    # Add info about assignments
+    pivot_df['assignment_1'] = pivot_df.iloc[:, 2:3].sum(axis=1)
+    pivot_df['assignment_2'] = pivot_df.iloc[:, 3:5].sum(axis=1)
+    pivot_df['assignment_3'] = pivot_df.iloc[:, 5:7].sum(axis=1)
+    pivot_df['assignment_4'] = pivot_df.iloc[:, 6:8].sum(axis=1)
+    pivot_df['assignment_5'] = pivot_df.iloc[:, 9:12].sum(axis=1)
+    pivot_df['assignment_6'] = pivot_df.iloc[:, 12:13].sum(axis=1)
+    
+    # Plots graph
+    ax = pivot_df.loc[:,['assignment_1','assignment_2','assignment_3', 'assignment_4', 'assignment_5', 'assignment_6']].plot.bar(stacked=True, figsize=(13,5))
+
+    # Popultes information in the ticks such that they aren't empty strings
+    plt.draw()
+    # Get labels and format them
+    labels = [item.get_text()[5:] + " (" + day_to_string(dt.datetime.strptime(item.get_text(),'%Y-%m-%d').weekday()) + ")" for item in ax.get_xticklabels()]
+    # Print labels
+    ax.set_xticklabels(labels)
+
+    # Draw background color on the assignment period
+    plt.axvspan(3, 9, facecolor='blue', alpha=0.15)
+    plt.axvspan(9, 18, facecolor='orange', alpha=0.15)
+    plt.axvspan(17, 24, facecolor='green', alpha=0.15)
+    plt.axvspan(23, 32, facecolor='red', alpha=0.15)
+    plt.axvspan(31, 38, facecolor='purple', alpha=0.15)
+    plt.axvspan(37, 45, facecolor='brown', alpha=0.15)
+
+    # Add title, x-label, y-label
+    ax.set_xlabel('Date')
+    ax.set_ylabel('Minutes watched')
+    ax.set_title('Class progression per day by assignment')
