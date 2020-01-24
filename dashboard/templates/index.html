@@ -5,11 +5,8 @@
 {% block content %}
 <h2>Class-wide statistics</h2>
 <div class="row">
-  <div class="col-md-6">
-    <img src="/api/plot.svg?kind=minutes_watched_per_hour" class="plot"/>
-  </div>
-  <div class="col-md-6">
-    <img src="/api/plot.svg?kind=coverage_per_lecture" class="plot"/>
+  <div class="col-md-12">
+    <img src="/api/plot.svg?kind=megaplot" class="plot"/>
   </div>
 </div>
 <div class="row">
@@ -17,11 +14,14 @@
     <img src="/api/plot.svg?kind=mean_lateness" class="plot"/>
   </div>
   <div class="col-md-6">
-    <img src="/api/plot.svg?kind=plot_lectures" class="plot"/>
+    <img src="/api/plot.svg?kind=minutes_watched_per_hour" class="plot"/>
   </div>
 </div>
 
 <h2>Lecture statistics</h2>
+<div>
+  <img src="/api/plot.svg?kind=coverage_per_lecture" class="plot"/>
+</div>
 <div class="lectures">
   <ul class="lectures-nav nav nav-tabs">
   </ul>
