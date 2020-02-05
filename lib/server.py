@@ -45,6 +45,11 @@ def input():
     return render_template('input.html')
 
 
+@app.route('/api/ping')
+def ping():
+    return ''
+
+
 @app.route('/api/lectures', methods=['GET', 'POST'])
 def lectures():
     if request.method == 'POST':
