@@ -25,8 +25,9 @@ def load_clean_data():
     if len(lectures) == 0:
         return pd.DataFrame([])
     else:
-        return clean_viewing_data(
-            pd.concat([l.viewing_data() for l in lectures]))
+        vd = clean_viewing_data(pd.concat([l.viewing_data() for l in lectures]))
+        vd['date'] = vd['time'].dt.date
+        return vd
 
 
 pcache = PickleCache('../chart-cache')
@@ -42,6 +43,11 @@ def main():
 @app.route('/input')
 def input():
     return render_template('input.html')
+
+
+@app.route('/api/ping')
+def ping():
+    return ''
 
 
 @app.route('/api/lectures', methods=['GET', 'POST'])
@@ -77,9 +83,10 @@ def plot():
         def get_svg():
             fig = Figure()
             ax = getattr(vis, kind)(vd, fig.add_subplot(1, 1, 1), **args)
+            fig.tight_layout()
             sns.despine(fig=fig)
             f = io.BytesIO()
-            fig.savefig(f, format='svg')
+            fig.savefig(f, format='svg', bbox_inches='tight')
             return f.getvalue()
 
         return Response(pcache.get(request.query_string, get_svg),

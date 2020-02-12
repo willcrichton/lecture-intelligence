@@ -55,7 +55,7 @@ class Assignment:
 
     @classmethod
     def from_json(cls, json):
-        return cls(index=json['index'],
+        return cls(index=int(json['index']),
                    name=json['name'],
                    lectures=json['lectures'],
                    duedate=dt.strptime(json['duedate'], '%m/%d/%Y'))

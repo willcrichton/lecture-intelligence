@@ -7,7 +7,7 @@ import pandas as pd
 from intervaltree import IntervalTree
 from datetime import timedelta, date
 import datetime as dt
-from lib.course import LECTURES, IDX_TO_ASSIGNMENT, IDX_TO_LECTURE
+from lib.course import LECTURES, ASSIGNMENTS, IDX_TO_ASSIGNMENT, IDX_TO_LECTURE
 
 palette = sns.color_palette()
 sns.set()
@@ -78,7 +78,7 @@ def plot_session_intervals(df):
 def lecture_heatmap(vd, ax, lec):
     lec = int(lec)
     vd = vd[vd.lecture == lec]
-    max_time = int(vd.end.max())+1
+    max_time = int(vd.end.max()) + 1
     bins = [0 for _ in range(0, max_time)]
 
     for _, row in vd.iterrows():
@@ -170,7 +170,8 @@ def plot_assignment(vd, ax, assignment_index):
                        sharey=True)
 
     fig.suptitle(
-        f'Lecture viewing habits relative to deadline for "{assignment.name}"')
+        f'Lecture viewing habits relative to deadline for "{assignment.name}"',
+        y=1.02)
     for lecture in lectures:
         df = vd[vd.lecture == lecture]
         plot_lectures(df, axs[count, 0])
@@ -183,7 +184,6 @@ def plot_assignment(vd, ax, assignment_index):
 
 
 def mean_lateness(vd, ax):
-    vd['date'] = vd['time'].dt.date
     mean_late = []
     for u in vd.user.unique():
         all_days_after = []
@@ -212,8 +212,13 @@ def mean_lateness(vd, ax):
         'How long do students wait on average before watching lecture?')
     return df
 
+
 def quarter_view(vd, ax):
-    ax = vd.groupby("date").sum().plot.bar(y="minutes", rot=90, figsize=(13, 5), legend=False, color='cornflowerblue')
+    ax = vd.groupby("date").sum().plot.bar(y="minutes",
+                                           rot=90,
+                                           figsize=(13, 5),
+                                           legend=False,
+                                           color='cornflowerblue')
 
     # Compute assignment deadline with respect to the first lecture date (ax plots lines using indexes)
     for assignment in ASSIGNMENTS:
@@ -223,48 +228,53 @@ def quarter_view(vd, ax):
     # Add title, x-label, y-label
     ax.set_xlabel('Date')
     ax.set_ylabel('Minutes watched of all lectures')
-    ax.set_title('When, and for how many minutes, do students consume lecture material?')
+    ax.set_title(
+        'When, and for how many minutes, do students consume lecture material?')
 
-def day_to_string(day):
-    days = ["M", " T", "W", "T", "F", "S", "S"]
-    return days[day]
 
-def class_progression(ax, vd):
-    df = vd
-    # Group by lecture and date (unique key) 
-    df['date'] = [dt.datetime.date(d) for d in df['time']] 
-    df2 = df.groupby(['lecture', 'date']).sum()
-    df2 = df2.reset_index()
-    # Create pivot dataframe and replace NaN with 0 minutes 
-    pivot_df = df2.pivot(index='date', columns='lecture', values='minutes')
-    pivot_df = pivot_df.fillna(0)
-    # Add info about assignments
-    pivot_df['assignment_1'] = pivot_df.iloc[:, 2:3].sum(axis=1)
-    pivot_df['assignment_2'] = pivot_df.iloc[:, 3:5].sum(axis=1)
-    pivot_df['assignment_3'] = pivot_df.iloc[:, 5:7].sum(axis=1)
-    pivot_df['assignment_4'] = pivot_df.iloc[:, 6:8].sum(axis=1)
-    pivot_df['assignment_5'] = pivot_df.iloc[:, 9:12].sum(axis=1)
-    pivot_df['assignment_6'] = pivot_df.iloc[:, 12:13].sum(axis=1)
-    
-    # Plots graph
-    ax = pivot_df.loc[:,['assignment_1','assignment_2','assignment_3', 'assignment_4', 'assignment_5', 'assignment_6']].plot.bar(stacked=True, figsize=(13,5))
+def megaplot(vd, ax):
+    df = vd.groupby(['lecture', 'date']).sum()
+    df = df.reset_index().pivot(index='date',
+                                columns='lecture',
+                                values='minutes')
+    df = df.fillna(0)
 
-    # Popultes information in the ticks such that they aren't empty strings
-    plt.draw()
+    assign_keys = []
+    prev_x = 0
+    for i, a in enumerate(ASSIGNMENTS):
+        k = f'Assignment {a.index}'
+        df[k] = df.loc[:, a.lectures].sum(axis=1)
+        assign_keys.append(k)
+
+        if i == 0:
+            prev = df[df['Assignment 1'] > 0].index.min()
+            prev_x = (prev - df.index.min()).days
+        else:
+            prev = ASSIGNMENTS[i - 1].duedate.date()
+        next_x = prev_x + (a.duedate.date() - prev).days
+        ax.axvspan(prev_x, next_x, facecolor=palette[i], alpha=0.15)
+        prev_x = next_x
+
+    df.loc[:, assign_keys].plot.bar(stacked=True,
+                                    ax=ax,
+                                    figsize=(15, 7),
+                                    color=palette)
+
+    def day_to_string(day):
+        days = ["M", "T", "W", "Th", "F", "Sat", "Sun"]
+        return days[day]
+
     # Get labels and format them
-    labels = [item.get_text()[5:] + " (" + day_to_string(dt.datetime.strptime(item.get_text(),'%Y-%m-%d').weekday()) + ")" for item in ax.get_xticklabels()]
+    labels = [
+        '({}) {}'.format(
+            day_to_string(
+                dt.datetime.strptime(item.get_text(), '%Y-%m-%d').weekday()),
+            item.get_text()[5:]) for item in ax.get_xticklabels()
+    ]
     # Print labels
     ax.set_xticklabels(labels)
 
-    # Draw background color on the assignment period
-    plt.axvspan(3, 9, facecolor='blue', alpha=0.15)
-    plt.axvspan(9, 18, facecolor='orange', alpha=0.15)
-    plt.axvspan(17, 24, facecolor='green', alpha=0.15)
-    plt.axvspan(23, 32, facecolor='red', alpha=0.15)
-    plt.axvspan(31, 38, facecolor='purple', alpha=0.15)
-    plt.axvspan(37, 45, facecolor='brown', alpha=0.15)
-
     # Add title, x-label, y-label
     ax.set_xlabel('Date')
-    ax.set_ylabel('Minutes watched')
-    ax.set_title('Class progression per day by assignment')
+    ax.set_ylabel('Total minutes watched by all students')
+    ax.set_title('Total viewing over the quarter, separated by assignment')
